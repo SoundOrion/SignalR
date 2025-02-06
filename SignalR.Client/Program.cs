@@ -10,26 +10,18 @@ class Program
             .WithUrl("http://localhost:5051/myHub") // サーバーのURLを指定
             .Build();
 
-        // サーバーからのメッセージを受信
-        connection.On<string>("ReceiveMessage", async (message) =>
+        // 型安全なメソッド登録
+        connection.On<string>(nameof(IHubClient.ReceiveMessage), async (message) =>
         {
             Console.WriteLine($"Received message from server: {message}");
 
-            // 何らかの処理 (例: メッセージを大文字に変換)
-            // 長時間の処理を別スレッドで実行
-            string result = await Task.Run(async () =>
-            {
-                Console.WriteLine("Starting long processing...");
+            // 疑似的に1時間かかる処理（今回は1秒）
+            await Task.Delay(TimeSpan.FromSeconds(1));
 
-                // 疑似的に1時間かかる処理
-                await Task.Delay(TimeSpan.FromHours(1));
-
-                // 処理完了後の結果
-                return message.ToUpper();
-            });
+            string result = message.ToUpper();
 
             // サーバーへ結果を送信
-            await connection.InvokeAsync("ReceiveResult", result);
+            await connection.InvokeAsync(nameof(IHubClient.ReceiveResult), result);
             Console.WriteLine($"Sent result to server: {result}");
         });
 
