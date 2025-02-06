@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // SignalRをサービスに追加
 builder.Services.AddSignalR();
 
-// 定期メッセージ送信のバックグラウンドサービスを登録
+// メッセージ送信サービスを登録
 builder.Services.AddHostedService<MessageSenderService>();
 
 builder.Services.AddControllers();

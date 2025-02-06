@@ -1,16 +1,11 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 public class MessageSenderService : BackgroundService
 {
-    private readonly IHubContext<MyHub> _hubContext;
+    private readonly IHubContext<MyHub, IHubClient> _hubContext;
     private readonly ILogger<MessageSenderService> _logger;
 
-    public MessageSenderService(IHubContext<MyHub> hubContext, ILogger<MessageSenderService> logger)
+    public MessageSenderService(IHubContext<MyHub, IHubClient> hubContext, ILogger<MessageSenderService> logger)
     {
         _hubContext = hubContext;
         _logger = logger;
@@ -27,7 +22,8 @@ public class MessageSenderService : BackgroundService
             string message = $"Server message at {DateTime.Now}";
             _logger.LogInformation($"[Server] Sending message: {message}");
 
-            await _hubContext.Clients.All.SendAsync("ReceiveMessage", message, stoppingToken);
+            // 型安全なメッセージ送信
+            await _hubContext.Clients.All.ReceiveMessage(message);
         }
     }
 }
