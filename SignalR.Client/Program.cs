@@ -21,7 +21,7 @@ class Program
             string result = message.ToUpper();
 
             // サーバーへ結果を送信
-            await connection.InvokeAsync(nameof(IHubClient.ReceiveResult), result);
+            await connection.InvokeAsync(nameof(IHubServer.ReceiveResult), result);
             Console.WriteLine($"Sent result to server: {result}");
         });
 
