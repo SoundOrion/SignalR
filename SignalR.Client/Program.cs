@@ -26,8 +26,20 @@ class Program
         });
 
         // 接続開始
-        await connection.StartAsync();
-        Console.WriteLine("Connected to SignalR server.");
+        connection.Closed += async (error) =>
+        {
+            Console.WriteLine("Connection closed. Retrying in 5 seconds...");
+            await Task.Delay(5000);
+            try
+            {
+                await connection.StartAsync();
+                Console.WriteLine("Reconnected.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Reconnection failed: {ex.Message}");
+            }
+        };
 
         // サーバーからのメッセージを待つ
         Console.ReadLine();

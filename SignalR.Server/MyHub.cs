@@ -1,12 +1,17 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Threading.Tasks;
 
 public class MyHub : Hub<IHubClient>, IHubServer
 {
-    // クライアントから送信された処理結果を受信
+    private readonly ILogger<MyHub> _logger;
+
+    public MyHub(ILogger<MyHub> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task ReceiveResult(string result)
     {
-        Console.WriteLine($"[Server] Received result from client: {result}");
+        _logger.LogInformation("Received result from client: {Result}", result);
+        await Task.CompletedTask;
     }
 }

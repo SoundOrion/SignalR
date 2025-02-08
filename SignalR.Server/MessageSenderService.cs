@@ -17,13 +17,22 @@ public class MessageSenderService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await Task.Delay(5000, stoppingToken); // 5秒ごとにメッセージ送信
-
-            string message = $"Server message at {DateTime.Now}";
-            _logger.LogInformation($"[Server] Sending message: {message}");
-
-            // 型安全なメッセージ送信
-            await _hubContext.Clients.All.ReceiveMessage(message);
+            try
+            {
+                await Task.Delay(5000, stoppingToken); // 5秒ごとにメッセージ送信
+                string message = $"Server message at {DateTime.Now}";
+                _logger.LogInformation("Sending message: {Message}", message);
+                await _hubContext.Clients.All.ReceiveMessage(message);
+            }
+            catch (TaskCanceledException)
+            {
+                // アプリケーションのシャットダウン時に発生するため無視
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while sending message.");
+            }
         }
     }
+
 }
