@@ -14,6 +14,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("CorsPolicy", builder =>
+//    {
+//        builder.AllowAnyHeader()
+//               .AllowAnyMethod()
+//               .AllowCredentials()
+//               .WithOrigins("http://localhost:3000"); // 許可するオリジン
+//    });
+//});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,24 +34,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//// ミドルウェアに追加
+//app.UseCors("CorsPolicy");
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 // エンドポイントを設定
 app.MapHub<MyHub>("/myHub");
-
-//var hubContext = app.Services.GetRequiredService<IHubContext<MyHub>>();
-
-//app.Lifetime.ApplicationStarted.Register(async () =>
-//{
-//    while (true)
-//    {
-//        await Task.Delay(5000); // 5秒ごとにメッセージ送信
-//        string message = $"Server message at {DateTime.Now}";
-//        await hubContext.Clients.All.SendAsync("ReceiveMessage", message);
-//        //Console.WriteLine($"[Server] Sent message: {message}");
-//    }
-//});
 
 app.Run();
