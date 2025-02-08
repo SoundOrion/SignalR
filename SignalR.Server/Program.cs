@@ -14,17 +14,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy", builder =>
-    {
-        builder.AllowAnyHeader()
-               .AllowAnyMethod()
-               .AllowCredentials()
-               .WithOrigins("http://localhost:3000"); // 許可するオリジン
-    });
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,9 +22,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// ミドルウェアに追加
-app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 
